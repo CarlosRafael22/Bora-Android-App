@@ -12,10 +12,10 @@ public class Activity {
     private String title;
     private String category;
     private String author_id;
-    private String date;
+    private Date date;
     private String place;
     private String place_LatLng;
-    private Date updated_at;
+    private Date updatedAt;
     private ArrayList<String> comments;
 
     public Activity(){
@@ -27,6 +27,26 @@ public class Activity {
         this.title = title;
         this.category = category;
         this.author_id = author_id;
+    }
+
+
+    public Activity(String id, String title, String category, String author_id, Date date, String place){
+        this.id = id;
+        this.title = title;
+        this.category = category;
+        this.author_id = author_id;
+        this.date = date;
+        this.place = place;
+    }
+
+    public Activity(String id, String title, String category, String author_id, Date date, String place, Date updated_at){
+        this.id = id;
+        this.title = title;
+        this.category = category;
+        this.author_id = author_id;
+        this.date = date;
+        this.place = place;
+        this.updatedAt = updated_at;
     }
 
     public String getId() {
@@ -61,11 +81,11 @@ public class Activity {
         this.author_id = author_id;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -85,12 +105,12 @@ public class Activity {
         this.place_LatLng = place_LatLng;
     }
 
-    public Date getUpdated_at() {
-        return updated_at;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(Date updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(Date updated_at) {
+        this.updatedAt = updated_at;
     }
 
     public ArrayList<String> getComments() {

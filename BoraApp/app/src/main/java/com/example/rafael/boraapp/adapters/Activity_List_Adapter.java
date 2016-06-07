@@ -1,6 +1,7 @@
 package com.example.rafael.boraapp.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,10 @@ import android.widget.Toast;
 import com.example.rafael.boraapp.R;
 import com.example.rafael.boraapp.models.Activity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.zip.Inflater;
 
 /**
@@ -87,7 +91,16 @@ public class Activity_List_Adapter extends BaseAdapter {
         //Vou mostrar so o ID agora, dps vou ter que fazer algo pra mostrar o nome do cara e poder linkar pra mostrar uma VIew com o Profile dele
         viewHolder.authorTV.setText(activities_list.get(position).getAuthor_id());
         viewHolder.categoryTV.setText(activities_list.get(position).getCategory());
-        viewHolder.dateTV.setText(activities_list.get(position).getDate());
+
+        SimpleDateFormat sdf2 = new SimpleDateFormat("dd/MM/yyyy");
+        String activity_date;
+        if(activities_list.get(position).getDate() == null){
+            activity_date = "A definir";
+        }else{
+            activity_date = sdf2.format(activities_list.get(position).getDate());
+        }
+
+        viewHolder.dateTV.setText(activity_date);
         viewHolder.placeTV.setText(activities_list.get(position).getPlace());
 
         return convertView;

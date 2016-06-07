@@ -60,6 +60,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     private static final int REQUEST_READ_CONTACTS = 0;
 
+    private static final String BASE_URL = "http://bora-server.herokuapp.com";
+
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -433,9 +435,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 URL url = null;
                 if(mAuthType == 1){
-                    url = new URL("http://10.0.2.2:3000/users/signup");
+                    url = new URL(BASE_URL+"/users/signup");
                 }else if(mAuthType == 0){
-                    url = new URL("http://10.0.2.2:3000/users/login");
+                    url = new URL(BASE_URL+"/users/login");
                 }
 
 

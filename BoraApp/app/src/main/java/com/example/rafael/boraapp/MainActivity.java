@@ -86,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Date last_sync_date;
 
+    private static final String BASE_URL = "http://bora-server.herokuapp.com";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -378,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
                 // http://openweathermap.org/API#forecast
                 //URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7&APPID=3c968409a0474eb891ad0aefc33f04e2");
 
-                URL url = new URL("http://10.0.2.2:3000/users/logout");
+                URL url = new URL(BASE_URL+"/users/logout");
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.setDoInput(true);
@@ -496,7 +498,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
 
-                URL url = new URL("http://10.0.2.2:3000/activities");
+                URL url = new URL(BASE_URL+"/activities");
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -604,31 +606,25 @@ public class MainActivity extends AppCompatActivity {
                         category = activity.getString("category");
                         author = activity.getString("author");
                         updatedAt = activity.getString("updatedAt");
+
+                        Date activity_date = null;
+                        if(activity.has("date")){
+                            date = activity.getString("date");
+                            activity_date = getActivityDateFromString(date);
+                        }
+
+                        if(activity.has("place")){
+                            place = activity.getString("place");
+                        }else{
+                            place = null;
+                        }
+
                         //Log.i("MAIN ACTIVITY", updatedAt);
 
 
-                        //updatedAT chega assim: 2016-05-21T20:08:49.770Z
-                        String[] parts = updatedAt.split("T");
-                        String act_date = parts[0]; // 2016-05-21
-                        String act_wrongTime = parts[1]; // 20:08:49.770Z
-
-                        //Agora pra tirar a ultima parte do act_time e so deixar o horario mesmo
-                        //Log.i("MAIN ACTIVITY", act_wrongTime);
-                        String[] time_parts = act_wrongTime.split("\\.");
-                        String act_time = time_parts[0]; // 20:08:49
-
-                        String act_date_time = act_date + " " + act_time;
+                        Date act_updatedAt = getUpdatedAtFromString(updatedAt);
 
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        Date act_updatedAt = null;
-                        try {
-                            act_updatedAt = sdf.parse(act_date_time);
-                            Log.i("MAIN ACTIVITY", String.valueOf(act_updatedAt));
-
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
 
                         JSONArray comments = activity.getJSONArray("comments");
                         if(comments.length() == 0){
@@ -645,7 +641,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("DATE 2", "last_synced: " + String.valueOf(lastSyncManager.getKeyLastSync()));
                         if(act_updatedAt.compareTo(lastSyncManager.getKeyLastSync())>0){
 
-                            Activity new_activity = new Activity(id, title, category, author);
+                            Activity new_activity = new Activity(id, title, category, author, activity_date, place, act_updatedAt);
                             Log.i("MAIN ACTIVITY", "Added: " + new_activity.getTitle());
                             activities_list.add(new_activity);
                         }
@@ -670,6 +666,67 @@ public class MainActivity extends AppCompatActivity {
                 insertActivitiesInDatabase(activities_list);
 
             }
+        }
+
+
+
+        public Date getUpdatedAtFromString(String updatedAt){
+
+            //updatedAT chega assim: 2016-05-21T20:08:49.770Z
+            String[] parts = updatedAt.split("T");
+            String act_date = parts[0]; // 2016-05-21
+            String act_wrongTime = parts[1]; // 20:08:49.770Z
+
+            //Agora pra tirar a ultima parte do act_time e so deixar o horario mesmo
+            //Log.i("MAIN ACTIVITY", act_wrongTime);
+            String[] time_parts = act_wrongTime.split("\\.");
+            String act_time = time_parts[0]; // 20:08:49
+
+            String act_date_time = act_date + " " + act_time;
+
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date act_updatedAt = null;
+            try {
+                act_updatedAt = sdf.parse(act_date_time);
+                Log.i("MAIN ACTIVITY", String.valueOf(act_updatedAt));
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            return act_updatedAt;
+        }
+
+
+        public Date getActivityDateFromString(String date){
+
+            //updatedAT chega assim: 2016-06-11T00:00:00.000Z
+            String[] parts = date.split("T");
+            String act_date = parts[0]; // 2016-06-11
+            //String act_wrongTime = parts[1]; // 00:00:00.000Z
+
+            //Agora pra tirar a ultima parte do act_time e so deixar o horario mesmo
+            //Log.i("MAIN ACTIVITY", act_wrongTime);
+
+            //AGORA NAO TA PEGANDO O HORARIO E SO A DATA
+//            String[] time_parts = act_wrongTime.split("\\.");
+//            String act_time = time_parts[0]; // 20:08:49
+//
+//            String act_date_time = act_date + " " + act_time;
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date activity_date = null;
+            try {
+                activity_date = sdf.parse(act_date);
+                Log.i("MAIN ACTIVITY", String.valueOf(activity_date));
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            return activity_date;
+
         }
 
 

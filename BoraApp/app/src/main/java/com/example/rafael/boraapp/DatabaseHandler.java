@@ -10,6 +10,8 @@ import android.util.Log;
 import com.example.rafael.boraapp.models.Activity;
 import com.example.rafael.boraapp.models.Comment;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -130,7 +132,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(ACTIVITY_CATEGORY, activity.getCategory());
         values.put(ACTIVITY_AUTHOR_ID, activity.getAuthor_id());
 
-        String date = (activity.getDate() == null)? "null" : activity.getDate();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String date = (activity.getDate() == null)? "null" : sdf.format(activity.getDate());
         values.put(ACTIVITY_DATE, date);
 
         String place = (activity.getPlace() == null)? "null" : activity.getPlace();
@@ -201,6 +204,30 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 activity.setTitle(cursor.getString(cursor.getColumnIndex(ACTIVITY_TITLE)));
                 activity.setAuthor_id(cursor.getString(cursor.getColumnIndex(ACTIVITY_AUTHOR_ID)));
                 activity.setCategory(cursor.getString(cursor.getColumnIndex(ACTIVITY_CATEGORY)));
+
+                String date = cursor.getString(cursor.getColumnIndex(ACTIVITY_DATE));
+                //Tenta pegar o date da activity. Se for null quer dizer que a activity nao teve data ao salvar
+                //entao nao entra nesse IF e eh setada como null.
+                //Se date nao for null, ela ira ser uma string que a gnt converte pra Date e faz activity.setDate()
+
+                Date act_Date = null;
+               // POOOORRRAAAAA, ISSO VEM UMA STRING "NULL" E NAO NULL OBJECT ENTAO SEMPRE TAVA ENTRANDO!!!!!
+//                if(date != null){
+                if(!date.equals("null")){
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+                    try {
+                        act_Date = sdf.parse(date);
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+
+                activity.setDate(act_Date);
+                activity.setPlace(cursor.getString(cursor.getColumnIndex(ACTIVITY_PLACE)));
                 // Adding contact to list
                 Log.v("DATABASE HANDLER", activity.getTitle());
                 activityList.add(activity);
